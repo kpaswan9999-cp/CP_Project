@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamAI | Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #07080f;
+            --surface: rgba(255, 255, 255, 0.04);
+            --border-light: rgba(255, 255, 255, 0.08);
+            --text-main: #f0f0f0;
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --accent-primary: #f0c040;
+            --accent-secondary: #00e5cc;
+            --accent-tertiary: #00b4d8;
+            --success: #00e676;
+            --warning: #f0c040;
+            --danger: #ff5252;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px 10px;
+            overflow-x: hidden;
+            position: relative;
+            background: #07080f;
+        }
+
+        /* Animated Mesh Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            opacity: 0.15;
+            pointer-events: none;
+            background: radial-gradient(circle at 100% 100%, var(--accent-primary) 0%, transparent 40%),
+                radial-gradient(circle at 0% 0%, var(--accent-secondary) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, #07080f 0%, transparent 60%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+            animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            padding: 20px;
+        }
+
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(to right, #ffffff, var(--accent-primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .btn-back {
+            padding: 12px 28px;
+            border-radius: 14px;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            text-decoration: none;
+            border: 1px solid var(--border-light);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-back:hover {
+            transform: translateX(-5px);
+            background: rgba(240, 192, 64, 0.1);
+            border-color: rgba(240, 192, 64, 0.4);
+            box-shadow: 0 0 15px rgba(240, 192, 64, 0.3);
+        }
+
+        .score-banner {
+            background: linear-gradient(135deg, rgba(240, 192, 64, 0.1), rgba(0, 229, 204, 0.05));
+            border: 1px solid rgba(240, 192, 64, 0.2);
+            border-radius: 28px;
+            padding: 45px;
+            text-align: center;
+            margin-bottom: 32px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle glow */
+        .score-banner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at center, rgba(240, 192, 64, 0.1), transparent 70%);
+            z-index: -1;
+        }
+
+        .score-title {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 14px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .score-val {
+            font-size: 85px;
+            font-weight: 800;
+            margin: 10px 0;
+            background: linear-gradient(135deg, #fff, #ffb6ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px rgba(255, 42, 133, 0.5));
+            line-height: 1;
+        }
+
+        .score-lbl {
+            display: inline-block;
+            font-size: 20px;
+            font-weight: 700;
+            padding: 8px 24px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .score-desc {
+            margin-top: 18px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.55);
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+            perspective: 1000px;
+        }
+
+        .metric-card {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(16px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-style: preserve-3d;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px) rotateX(5deg) rotateY(2deg);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .m-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.5));
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+        }
+
+        .m-title {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .m-val {
+            font-size: 32px;
+            font-weight: 800;
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            color: #fff;
+        }
+
+        .m-v-unit {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--accent-tertiary);
+        }
+
+        .m-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.38);
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        .m-status {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Insight section */
+        .insight-box {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 32px;
+            backdrop-filter: blur(16px);
+            animation: slideUpFade 0.9s ease 0.4s both;
+        }
+
+        .insight-box h3 {
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .insight-box h3 span {
+            color: var(--accent-primary);
+            margin-right: 8px;
+        }
+
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .insight-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .insight-icon {
+            font-size: 22px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .insight-text strong {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .insight-text p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.5;
+        }
+
+        .charts {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 850px) {
+            .charts {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-box {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 30px;
+            backdrop-filter: blur(16px);
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-box:hover {
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .chart-box h3 {
+            font-size: 18px;
+            margin-bottom: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .chart-box h3 span {
+            color: var(--accent-primary);
+            margin-right: 8px;
+        }
+
+        .chart-sub {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">⚡ StreamAI</div>
+            <nav style="display: flex; gap: 24px; align-items: center;">
+                <a href="/"
+                    style="color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; font-weight: 600; text-transform: uppercase;">Home</a>
+                <a href="javascript:void(0)" onclick="toggleHistory(true)"
+                    style="color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; font-weight: 600; text-transform: uppercase;">History</a>
+                <a href="/#about"
+                    style="color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; font-weight: 600; text-transform: uppercase;">About</a>
+            </nav>
+            <a href="/" class="btn-back">← Retest</a>
+        </header>
+
+        <div class="score-banner">
+            <div class="score-title">A.I. Model Prediction Output</div>
+            <div class="score-val" id="scoreVal">0</div>
+            <div class="score-lbl" id="scoreLbl">Analyzing...</div>
+            <p class="score-desc" id="scoreDesc"></p>
+        </div>
+
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="m-icon">📶</div>
+                <div class="m-title">Signal Strength</div>
+                <div class="m-val" id="valSignal">-<span class="m-v-unit">dBm</span></div>
+                <div class="m-desc">How strong your 5G radio signal is. Closer to 0 dBm is better; below -100 dBm is
+                    very weak.</div>
+                <span class="m-status" id="sigStatus">-</span>
+            </div>
+            <div class="metric-card">
+                <div class="m-icon">⚡</div>
+                <div class="m-title">Download Speed</div>
+                <div class="m-val" id="valSpeed">-<span class="m-v-unit">Mbps</span></div>
+                <div class="m-desc">Data throughput from the network. Higher Mbps = smoother 4K/8K video streaming.
+                </div>
+                <span class="m-status" id="speedStatus">-</span>
+            </div>
+            <div class="metric-card">
+                <div class="m-icon">⏱️</div>
+                <div class="m-title">Latency</div>
+                <div class="m-val" id="valLatency">-<span class="m-v-unit">ms</span></div>
+                <div class="m-desc">Round-trip delay between device and server. Lower = more responsive. Under 30ms is
+                    ideal.</div>
+                <span class="m-status" id="latStatus">-</span>
+            </div>
+            <div class="metric-card">
+                <div class="m-icon">〰️</div>
+                <div class="m-title">Jitter</div>
+                <div class="m-val" id="valJitter">-<span class="m-v-unit">ms</span></div>
+                <div class="m-desc">Variation in packet arrival times. High jitter causes buffering and choppy playback.
+                </div>
+                <span class="m-status" id="jitterStatus">-</span>
+            </div>
+        </div>
+
+        <!-- Insight Section -->
+        <div class="insight-box">
+            <h3><span>●</span> What This Prediction Means</h3>
+            <div class="insight-grid" id="insightGrid">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+
+        <div class="charts">
+            <div class="chart-box">
+                <h3><span>●</span> Confidence Ratio</h3>
+                <p class="chart-sub">How certain the AI model is about this prediction. Values above 80% indicate high
+                    reliability.</p>
+                <div style="height: 250px; position:relative;"><canvas id="gaugeChart"></canvas></div>
+            </div>
+            <div class="chart-box">
+                <h3><span>●</span> Metric Hierarchy</h3>
+                <p class="chart-sub">Which network metrics most influenced the model's decision. Taller bars = higher
+                    impact on the final score.</p>
+                <div style="height: 250px; position:relative;"><canvas id="barChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- Technical Logs Section -->
+        <div class="insight-box"
+            style="margin-top: 32px; background: rgba(0,0,0,0.4); border-color: rgba(0, 229, 204, 0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 0;"><span style="color: var(--accent-secondary);">●</span> Internal Session
+                    Logs</h3>
+                <span
+                    style="font-size: 11px; color: var(--accent-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Live
+                    Trace Active</span>
+            </div>
+            <div id="logTerminal"
+                style="background: #050505; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; font-family: 'Courier New', monospace; font-size: 12px; color: #888; line-height: 1.6; overflow-x: auto;">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="historyModal"
+        style="position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); z-index: 1000; opacity: 0; pointer-events: none; transition: 0.4s; display: flex; align-items: center; justify-content: center;">
+        <div
+            style="width: 90%; max-width: 800px; background: #0c0d16; border: 1px solid var(--accent-primary); border-radius: 24px; padding: 40px; max-height: 85vh; overflow-y: auto; position: relative;">
+            <button onclick="toggleHistory(false)"
+                style="position: absolute; right: 20px; top: 20px; background: none; border: none; font-size: 24px; cursor: pointer; color: #fff;">&times;</button>
+            <h2 style="margin-bottom: 30px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;">
+                Prediction History</h2>
+            <div id="historyList">
+                <p style="text-align: center; color: var(--text-muted); padding: 40px;">No predictions saved yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Injection safe from IDE syntax errors -->
+    <script id="flask-data" type="application/json">
+        {
+            "prediction": {{ prediction|tojson|safe }},
+            "confidence": {{ confidence|tojson|safe }},
+            "features": {{ features|tojson|safe }},
+            "featureNames": {{ feature_names|tojson|safe }},
+            "importances": {{ importances|tojson|safe }},
+            "logs": {{ logs|tojson|safe if logs else '[]' }}
+        }
+    </script>
+
+    <script>
+        let data = {};
+        try {
+            data = JSON.parse(document.getElementById('flask-data').textContent);
+        } catch (e) {
+            data = { prediction: 4, confidence: 98.2, features: [-75, 350, 15, 2, 1, 0], featureNames: ["Signal", "Speed", "Latency", "Jitter", "VoNR", "Drop"], importances: [0.35, 0.25, 0.15, 0.15, 0.05, 0.05], logs: ["No logs available."] };
+        }
+
+        const score = data.prediction;
+        const conf = data.confidence;
+        const sig = data.features[0], spd = data.features[1], lat = data.features[2], jit = data.features[3];
+
+        // ── Logs terminal ──
+        const logBox = document.getElementById('logTerminal');
+        if (logBox && data.logs) {
+            logBox.innerHTML = data.logs.map(l => `<div><span style="color:#00e5cc">></span> ${l}</div>`).join('');
+        }
+
+        // ── Score counter ──
+        let currentScore = 0;
+        const scoreEl = document.getElementById('scoreVal');
+        const countInterval = setInterval(() => {
+            currentScore += 1;
+            scoreEl.innerText = currentScore;
+            if (currentScore >= score) clearInterval(countInterval);
+            if (score <= 0) { scoreEl.innerText = 0; clearInterval(countInterval); }
+        }, 120);
+
+        // ── Score label & description ──
+        const lbl = document.getElementById('scoreLbl');
+        const desc = document.getElementById('scoreDesc');
+        const scoreInfo = [
+            { val: 5, label: 'Excellent Quality', color: '#000', bg: 'var(--success)', glow: 'rgba(0,255,170,0.4)', text: '🎉 Your 5G network is performing at its best. Video streaming at 4K/8K should be flawless with zero buffering, crystal-clear audio, and near-zero packet loss.' },
+            { val: 4, label: 'Good Quality', color: '#000', bg: 'var(--accent-tertiary)', glow: 'rgba(0,210,255,0.4)', text: '✅ Your connection is solid and stable. HD streaming will work great. You may occasionally notice slight buffering during very heavy traffic periods.' },
+            { val: 3, label: 'Fair Quality', color: '#000', bg: 'var(--warning)', glow: 'rgba(255,180,0,0.4)', text: '⚠️ Network conditions are average. Expect occasional stutters on HD content. Consider switching to 720p streaming or moving closer to your 5G tower.' },
+            { val: 2, label: 'Poor Quality', color: '#fff', bg: 'var(--danger)', glow: 'rgba(255,0,85,0.4)', text: '🟠 Network quality is low. Streaming may be low resolution or experience intermittent buffering.' },
+            { val: 1, label: 'Very Poor', color: '#fff', bg: '#000', glow: 'rgba(255,0,0,0.6)', text: '❌ Network quality is critically low. Streaming is likely failing. Check signal coverage or reboot your modem.' }
+        ];
+        const si = scoreInfo.find(s => score >= s.val) || scoreInfo[scoreInfo.length - 1];
+        lbl.innerText = si.label; lbl.style.color = si.color; lbl.style.background = si.bg; lbl.style.boxShadow = `0 0 20px ${si.glow}`;
+        desc.innerText = si.text;
+
+        // ── Metric values + status tags ──
+        const badge = (el, label, color, bg) => { el.innerText = label; el.style.color = color; el.style.background = bg; };
+
+        document.getElementById('valSignal').innerHTML = sig.toFixed(1) + '<span class="m-v-unit">dBm</span>';
+        badge(document.getElementById('sigStatus'),
+            sig >= -70 ? '✅ Strong' : sig >= -90 ? '⚡ Moderate' : '❌ Weak',
+            '#000', sig >= -70 ? '#00ffaa' : sig >= -90 ? '#ffb400' : '#ff0055');
+
+        document.getElementById('valSpeed').innerHTML = spd.toFixed(1) + '<span class="m-v-unit">Mbps</span>';
+        badge(document.getElementById('speedStatus'),
+            spd >= 200 ? '✅ Fast' : spd >= 50 ? '⚡ Moderate' : '❌ Slow',
+            '#000', spd >= 200 ? '#00ffaa' : spd >= 50 ? '#ffb400' : '#ff0055');
+
+        document.getElementById('valLatency').innerHTML = lat.toFixed(1) + '<span class="m-v-unit">ms</span>';
+        badge(document.getElementById('latStatus'),
+            lat <= 30 ? '✅ Low' : lat <= 80 ? '⚡ Acceptable' : '❌ High',
+            '#000', lat <= 30 ? '#00ffaa' : lat <= 80 ? '#ffb400' : '#ff0055');
+
+        document.getElementById('valJitter').innerHTML = jit.toFixed(1) + '<span class="m-v-unit">ms</span>';
+        badge(document.getElementById('jitterStatus'),
+            jit <= 10 ? '✅ Stable' : jit <= 30 ? '⚡ Moderate' : '❌ Unstable',
+            '#000', jit <= 10 ? '#00ffaa' : jit <= 30 ? '#ffb400' : '#ff0055');
+
+        // ── Insight cards ──
+        const insights = [
+            { icon: '🎯', title: 'Prediction Score', text: `The model assigned a quality score of <strong>${score}/5</strong> based on all 6 input metrics combined.` },
+            { icon: '📡', title: 'Signal Analysis', text: `Your signal at <strong>${sig.toFixed(1)} dBm</strong> is ${sig >= -70 ? 'excellent — ideal for high speeds.' : sig >= -90 ? 'moderate — you may see speed drops.' : 'weak — consider repositioning your device.'}` },
+            { icon: '🚀', title: 'Speed Impact', text: `At <strong>${spd.toFixed(1)} Mbps</strong>, you can ${spd >= 200 ? 'stream 4K/8K without any issues.' : spd >= 50 ? 'comfortably stream HD content.' : 'only stream SD. Consider a stronger connection.'}` },
+            { icon: '⏱️', title: 'Latency & Jitter', text: `Latency of <strong>${lat.toFixed(1)}ms</strong> and jitter of <strong>${jit.toFixed(1)}ms</strong> — ${lat <= 30 && jit <= 10 ? 'both are excellent. Real-time streaming is very smooth.' : 'may cause occasional buffering or choppy playback.'}` },
+        ];
+        document.getElementById('insightGrid').innerHTML = insights.map(i =>
+            `<div class="insight-item"><div class="insight-icon">${i.icon}</div><div class="insight-text"><strong>${i.title}</strong><p>${i.text}</p></div></div>`
+        ).join('');
+
+        Chart.defaults.color = '#cbd5e1';
+        Chart.defaults.font.family = 'Outfit';
+        Chart.defaults.font.weight = '500';
+
+        const ctxG = document.getElementById('gaugeChart');
+        const gradG = ctxG.getContext('2d').createLinearGradient(0, 0, 200, 0);
+        gradG.addColorStop(0, '#ff2a85'); gradG.addColorStop(1, '#8a2be2');
+
+        new Chart(ctxG, {
+            type: 'doughnut',
+            data: { labels: ['Confidence', ''], datasets: [{ data: [conf, 100 - conf], backgroundColor: [gradG, 'rgba(255,255,255,0.05)'], borderWidth: 0, cutout: '80%', borderRadius: [{ outerStart: 20, innerStart: 20, outerEnd: 5, innerEnd: 5 }, 0] }] },
+            options: { circumference: 180, rotation: -90, maintainAspectRatio: false, plugins: { legend: { display: false } }, animation: { duration: 2500, animateRotate: true, easing: 'easeOutExpo' } }
+        });
+
+        const ctxB = document.getElementById('barChart');
+        const gradB = ctxB.getContext('2d').createLinearGradient(0, 0, 0, 300); gradB.addColorStop(0, '#ff2a85'); gradB.addColorStop(1, '#00d2ff');
+
+        new Chart(ctxB, {
+            type: 'bar',
+            data: { labels: data.featureNames, datasets: [{ data: data.importances, backgroundColor: gradB, borderRadius: 8 }] },
+            options: {
+                maintainAspectRatio: false,
+                scales: { y: { display: false }, x: { grid: { display: false }, border: { display: false }, ticks: { maxRotation: 45, minRotation: 45, color: '#e2e8f0' } } },
+                plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(0,0,0,0.8)', padding: 12, cornerRadius: 8, callbacks: { label: c => (c.raw * 100).toFixed(1) + '%' } } },
+                animation: { duration: 2000, easing: 'easeOutQuart', delay: c => c.dataIndex * 150 }
+            }
+        });
+
+        // ── Prediction History Logic (Dashboard) ─────────────────
+        function toggleHistory(show) {
+            const modal = document.getElementById('historyModal');
+            if (show) {
+                modal.style.opacity = '1';
+                modal.style.pointerEvents = 'all';
+                loadHistory();
+            } else {
+                modal.style.opacity = '0';
+                modal.style.pointerEvents = 'none';
+            }
+        }
+
+        async function loadHistory() {
+            const res = await fetch('/history');
+            const data = await res.json();
+            const list = document.getElementById('historyList');
+
+            if (data.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 40px;">No predictions saved yet.</p>';
+                return;
+            }
+
+            list.innerHTML = data.map(item => `
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 700; color: var(--accent-primary); margin-bottom: 4px;">Score: ${item.prediction}/5 — Conf: ${item.confidence}%</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">${item.timestamp}</div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <a href="/view/${item.id}" style="padding: 8px 16px; background: var(--accent-primary); color: #000; text-decoration: none; border-radius: 8px; font-size: 12px; font-weight: 700;">View</a>
+                        <a href="/download_report/${item.id}" style="padding: 8px 16px; background: var(--accent-secondary); color: #000; text-decoration: none; border-radius: 8px; font-size: 12px; font-weight: 700;">Download Report</a>
+                        <button onclick="deletePrediction('${item.id}')" style="padding: 8px 16px; background: rgba(255,0,0,0.1); border: 1px solid #ff0000; color: #ff0000; border-radius: 12px; cursor: pointer; font-size: 12px; font-weight: 700;">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function deletePrediction(id) {
+            await fetch(`/delete_prediction/${id}`, { method: 'POST' });
+            loadHistory();
+        }
+    </script>
+</body>
+
+</html>

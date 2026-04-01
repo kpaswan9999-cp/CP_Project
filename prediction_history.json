@@ -1,0 +1,156 @@
+[
+    {
+        "id": "0191b000-bcbe-459f-a7f0-51b96c1a15b2",
+        "timestamp": "2026-04-01 09:28:38",
+        "features": {
+            "signal_strength": -110.0,
+            "download_speed": 1.0,
+            "latency": 100.0,
+            "jitter": 50.0,
+            "vonr_enabled": "Disabled",
+            "dropped_connection": "Yes"
+        },
+        "prediction": 1,
+        "confidence": 99.94999694824219,
+        "logs": [
+            "[09:28:37] Received telemetry: sig=-110.0, spd=1.0",
+            "[09:28:37] Features normalized to model input shape (1, 6)",
+            "[09:28:37] Executing RandomForest model inference...",
+            "[09:28:38] Inference complete. Raw=0, 1-5 Scaled=1"
+        ]
+    },
+    {
+        "id": "2152b826-dec0-4a3b-a25f-236523c3409d",
+        "timestamp": "2026-04-01 09:27:45",
+        "features": {
+            "signal_strength": -60.0,
+            "download_speed": 500.0,
+            "latency": 10.0,
+            "jitter": 1.0,
+            "vonr_enabled": "Enabled",
+            "dropped_connection": "No"
+        },
+        "prediction": 5,
+        "confidence": 99.98999786376953,
+        "logs": [
+            "[09:27:45] Received telemetry: sig=-60.0, spd=500.0",
+            "[09:27:45] Features normalized to model input shape (1, 6)",
+            "[09:27:45] Executing RandomForest model inference...",
+            "[09:27:45] Inference complete. Raw=4, 1-5 Scaled=5"
+        ]
+    },
+    {
+        "id": "48c022e5-4dee-47db-be2f-d18334b5f829",
+        "timestamp": "2026-04-01 09:26:49",
+        "features": {
+            "signal_strength": -105.0,
+            "download_speed": 20.0,
+            "latency": 90.0,
+            "jitter": 20.0,
+            "vonr_enabled": "Disabled",
+            "dropped_connection": "Yes"
+        },
+        "prediction": 1,
+        "confidence": 99.62999725341797,
+        "logs": [
+            "[09:26:49] Received telemetry: sig=-105.0, spd=20.0",
+            "[09:26:49] Features normalized to model input shape (1, 6)",
+            "[09:26:49] Executing RandomForest model inference...",
+            "[09:26:49] Inference complete. Raw=0, 1-5 Scaled=1"
+        ]
+    },
+    {
+        "id": "f84b54a4-98bb-4fcd-b328-5c81e556d799",
+        "timestamp": "2026-04-01 09:25:47",
+        "features": {
+            "signal_strength": -85.0,
+            "download_speed": 150.0,
+            "latency": 40.0,
+            "jitter": 8.0,
+            "vonr_enabled": "Enabled",
+            "dropped_connection": "No"
+        },
+        "prediction": 3,
+        "confidence": 98.06999969482422,
+        "logs": [
+            "[09:25:47] Received telemetry: sig=-85.0, spd=150.0",
+            "[09:25:47] Features normalized to model input shape (1, 6)",
+            "[09:25:47] Executing RandomForest model inference...",
+            "[09:25:47] Inference complete. Raw=2, 1-5 Scaled=3"
+        ]
+    },
+    {
+        "id": "3d0b70d3-6083-4464-a7bd-e569f9f96625",
+        "timestamp": "2026-04-01 09:07:24",
+        "features": {
+            "signal_strength": -85.0,
+            "download_speed": 150.0,
+            "latency": 40.0,
+            "jitter": 8.0,
+            "vonr_enabled": "Enabled",
+            "dropped_connection": "No"
+        },
+        "prediction": 1,
+        "confidence": 77.51000213623047,
+        "logs": [
+            "[09:07:24] Received telemetry: sig=-85.0, spd=150.0",
+            "[09:07:24] Features normalized to model input shape (1, 6)",
+            "[09:07:24] Executing RandomForest model inference...",
+            "[09:07:24] Inference complete. Raw=0, 1-5 Scaled=1"
+        ]
+    },
+    {
+        "id": "b5229dc2-1030-4a69-b784-52c2516f5b07",
+        "timestamp": "2026-04-01 09:06:16",
+        "features": {
+            "signal_strength": -65.0,
+            "download_speed": 400.0,
+            "latency": 15.0,
+            "jitter": 3.0,
+            "vonr_enabled": "Enabled",
+            "dropped_connection": "No"
+        },
+        "prediction": 5,
+        "confidence": 96.0199966430664,
+        "logs": [
+            "[09:06:16] Received telemetry: sig=-65.0, spd=400.0",
+            "[09:06:16] Features normalized to model input shape (1, 6)",
+            "[09:06:16] Executing RandomForest model inference...",
+            "[09:06:16] Inference complete. Raw=4, 1-5 Scaled=5"
+        ]
+    },
+    {
+        "id": "a5fc34fe-8990-45b1-8c0e-1ae5abb2dcea",
+        "timestamp": "2026-04-01 03:00:37",
+        "features": {
+            "signal_strength": 200.0,
+            "download_speed": 300.0,
+            "latency": 5.0,
+            "jitter": 1.2,
+            "vonr_enabled": "Enabled",
+            "dropped_connection": "No"
+        },
+        "prediction": 2,
+        "confidence": 99.05000305175781,
+        "logs": [
+            "[03:00:37] Received telemetry: sig=200.0, spd=300.0",
+            "[03:00:37] Features normalized to model input shape (1, 6)",
+            "[03:00:37] Executing RandomForest model inference...",
+            "[03:00:37] Inference complete. Raw=1, 1-5 Scaled=2"
+        ]
+    },
+    {
+        "id": "6548c9de-3944-4659-8da9-4aa0907f9a8b",
+        "timestamp": "2026-04-01 02:35:06",
+        "features": {
+            "signal_strength": -171.0,
+            "download_speed": 686.0,
+            "latency": 12.5,
+            "jitter": 1.5,
+            "vonr_enabled": "Enabled",
+            "dropped_connection": "No"
+        },
+        "prediction": 3,
+        "confidence": 99.91999816894531
+    }
+]
