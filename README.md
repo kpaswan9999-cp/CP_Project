@@ -1,3 +1,5 @@
+# Live link: https://cp-project-1-tpw5.onrender.com
+
 # ⚡ StreamAI: Premium 5G Network Quality Predictor
 
 StreamAI is a high-end, AI-driven diagnostic platform designed to predict 5G streaming quality using real-time network telemetry. Featuring a **Gold & Teal Glassmorphic UI** and a **Scientific Neural Network Background**, it provides users with professional diagnostic tickets and historical data management.
