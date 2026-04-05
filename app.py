@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, send_file, redirect, url_for, jsonify
 import numpy as np
+from flask_cors import CORS
 import pickle
 import json
 import os
@@ -9,6 +10,7 @@ from io import BytesIO
 from fpdf import FPDF
 
 app = Flask(__name__)
+CORS(app) # Enable CORS for all routes
 
 # Load model
 model = pickle.load(open("model.pkl", "rb")) # Reloaded with new model!
@@ -100,18 +102,19 @@ def predict():
         history.insert(0, record)  # Newest first
         save_history(history)
 
-        return render_template(
-            "result.html",
-            prediction=prediction,
-            confidence=confidence,
-            features=features.tolist()[0],
-            feature_names=feature_names,
-            importances=importances.tolist(),
-            logs=logs
-        )
+        # Return JSON for the frontend
+        return jsonify({
+            "id": record["id"],
+            "prediction": prediction,
+            "confidence": confidence,
+            "features": features.tolist()[0],
+            "feature_names": feature_names,
+            "importances": importances.tolist(),
+            "logs": logs
+        })
 
     except Exception as e:
-        return f"Error: {str(e)}"
+        return jsonify({"error": str(e)}), 400
 
 @app.route("/history")
 def history():
@@ -135,8 +138,40 @@ class TicketPDF(FPDF):
         self.line(10, 25, 200, 25)
         self.ln(10)
 
+@app.route("/api/view/<id>")
+def view_prediction_api(id):
+    history = load_history()
+    record = next((r for r in history if r["id"] == id), None)
+    if not record:
+        return "Record not found", 404
+        
+    feat_dict = record["features"]
+    features_list = [
+        feat_dict["signal_strength"],
+        feat_dict["download_speed"],
+        feat_dict["latency"],
+        feat_dict["jitter"],
+        1 if feat_dict["vonr_enabled"] == "Enabled" else 0,
+        1 if feat_dict["dropped_connection"] == "Yes" else 0
+    ]
+    
+    try:
+        importances = model.feature_importances_.tolist()
+    except:
+        importances = [0.2, 0.2, 0.2, 0.2, 0.1, 0.1]
+        
+    return jsonify({
+        "prediction": record["prediction"],
+        "confidence": record["confidence"],
+        "features": features_list,
+        "feature_names": feature_names,
+        "importances": importances,
+        "logs": record.get("logs", [])
+    })
+
 @app.route("/view/<id>")
-def view_prediction(id):
+def view_prediction_html(id):
+    # This route is maintained for compatibility, but the frontend will likely use /api/view/<id>
     history = load_history()
     record = next((r for r in history if r["id"] == id), None)
     if not record:
@@ -229,4 +264,5 @@ def download_report(id):
     )
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)

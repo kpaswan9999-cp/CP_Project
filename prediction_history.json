@@ -1,42 +1,22 @@
 [
     {
-        "id": "0191b000-bcbe-459f-a7f0-51b96c1a15b2",
-        "timestamp": "2026-04-01 09:28:38",
+        "id": "46140de9-7f36-4d98-9b1d-944590cfe94c",
+        "timestamp": "2026-04-06 01:51:03",
         "features": {
-            "signal_strength": -110.0,
-            "download_speed": 1.0,
-            "latency": 100.0,
-            "jitter": 50.0,
-            "vonr_enabled": "Disabled",
-            "dropped_connection": "Yes"
-        },
-        "prediction": 1,
-        "confidence": 99.94999694824219,
-        "logs": [
-            "[09:28:37] Received telemetry: sig=-110.0, spd=1.0",
-            "[09:28:37] Features normalized to model input shape (1, 6)",
-            "[09:28:37] Executing RandomForest model inference...",
-            "[09:28:38] Inference complete. Raw=0, 1-5 Scaled=1"
-        ]
-    },
-    {
-        "id": "2152b826-dec0-4a3b-a25f-236523c3409d",
-        "timestamp": "2026-04-01 09:27:45",
-        "features": {
-            "signal_strength": -60.0,
-            "download_speed": 500.0,
-            "latency": 10.0,
-            "jitter": 1.0,
+            "signal_strength": -75.0,
+            "download_speed": 350.0,
+            "latency": 20.0,
+            "jitter": 4.0,
             "vonr_enabled": "Enabled",
             "dropped_connection": "No"
         },
-        "prediction": 5,
-        "confidence": 99.98999786376953,
+        "prediction": 2,
+        "confidence": 99.93000030517578,
         "logs": [
-            "[09:27:45] Received telemetry: sig=-60.0, spd=500.0",
-            "[09:27:45] Features normalized to model input shape (1, 6)",
-            "[09:27:45] Executing RandomForest model inference...",
-            "[09:27:45] Inference complete. Raw=4, 1-5 Scaled=5"
+            "[01:51:03] Received telemetry: sig=-75.0, spd=350.0",
+            "[01:51:03] Features normalized to model input shape (1, 6)",
+            "[01:51:03] Executing RandomForest model inference...",
+            "[01:51:03] Inference complete. Raw=1, 1-5 Scaled=2"
         ]
     },
     {
