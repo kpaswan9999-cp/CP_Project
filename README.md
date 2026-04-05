@@ -1,4 +1,4 @@
-# Live link: https://cp-project-1-tpw5.onrender.com
+# Live link: https://cp-project-57wajvgp3-kpaswan9999-cps-projects.vercel.app
 
 # ⚡ StreamAI: Premium 5G Network Quality Predictor
 
